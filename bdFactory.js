@@ -9,7 +9,7 @@ app.factory('bdFactory', function($cordovaSQLite) {
       
       // Verifica se é para pegar campos específicos
       if(!fields) { // Se não tiver campos específicos pega tudo da tabela
-        query += "SELECT * ";
+        query += "SELECT *";
       } else {
         query += "SELECT ";
 
@@ -126,9 +126,41 @@ app.factory('bdFactory', function($cordovaSQLite) {
       console.error("Nenhuma tabela especificada");
   }
 
+  var _update = function(table, fields, where) {
+    var query   = '';
+
+    // Checa se alguma tabela foi passada
+    if(table) {
+      query += 'UPDATE ' + table + ' SET';
+
+      // Checa se os valores para serem inseridos foram passados
+      if(fields) {
+        // Monta a query dos campos e valores
+        for(var i = 0;i < fields.length;i++) {
+          query += " " + fields[i].column + " = '" + fields[i].value + "'"
+
+          if(i !== (fields.length - 1)) {
+            query += ',';
+          }
+        }
+
+        return $cordovaSQLite.execute(db, query).then(function(res) {
+          return true;
+        }, function(err) {
+          console.error(err);
+        });
+      }
+      else
+        console.error("Sem valores para atualizar");
+    }
+    else
+      console.error("Nenhuma tabela especificada");
+  }
+
   return {
     select: _select,
     insert: _insert,
-    delete: _delete
+    delete: _delete,
+    update: _update
   }
 });
