@@ -131,18 +131,21 @@ app.factory('bdFactory', function($cordovaSQLite) {
 
     // Checa se alguma tabela foi passada
     if(table) {
-      query += 'UPDATE ' + table + ' SET';
+      query += 'UPDATE ' + table + ' SET ';
 
       // Checa se os valores para serem inseridos foram passados
       if(fields) {
         // Monta a query dos campos e valores
         for(var i = 0;i < fields.length;i++) {
-          query += " " + fields[i].column + " = '" + fields[i].value + "'"
+          query += fields[i].column + " = '" + fields[i].value + "' "
 
           if(i !== (fields.length - 1)) {
-            query += ',';
+            query += ', ';
           }
         }
+
+        if(where)
+          query += where;
 
         return $cordovaSQLite.execute(db, query).then(function(res) {
           return true;
